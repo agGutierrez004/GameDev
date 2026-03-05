@@ -15,6 +15,8 @@ public:
     char GetLocation(Vec2 _pos);
     void ClearLocation(Vec2 _pos);
     void OpenDoor(Vec2 _pos);
+    Monster* GetMonsterAt(Vec2 _pos);
+    void RemoveMonster(Monster* _monster);
 private:
     std::vector<Entity*> m_entities;
     Player* m_player = nullptr;

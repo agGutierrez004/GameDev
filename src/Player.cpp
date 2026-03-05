@@ -1,5 +1,7 @@
 #include "Player.hpp"
 #include "Room.hpp"
+#include "Monster.hpp"
+#include "Dice.hpp"
 #include "fogpi/io.hpp"
 
 void Player::Start(Vec2 _pos) {
@@ -42,16 +44,66 @@ void Player::Update() {
 
     Vec2 tryPos = m_position + direction;
 
-    if (room->GetLocation(tryPos) == 'K') {
+    Monster* monster = room->GetMonsterAt(tryPos);
+    if (monster != nullptr)
+    {
+        // Fight
+        std::vector<Die> playerDice = { {6} };
+        std::vector<Die> monsterDice = { {6} };
+        RollStats playerRoll = RollDice(playerDice);
+        RollStats monsterRoll = RollDice(monsterDice);
+        printf("Player rolls %d, Monster rolls %d\n", playerRoll.total, monsterRoll.total);
+        if (playerRoll.total > monsterRoll.total)
+        {
+            printf("Player wins! Monster defeated.\n");
+            room->RemoveMonster(monster);
+        }
+        else
+        {
+            printf("Monster wins! Player takes damage.\n");
+            health -= 2;
+            if (health <= 0)
+            {
+                printf("Player died!\n");
+                exit(0);
+            }
+        }
+        PrintStats();
+        return; // Don't move
+    }
+
+    char loc = room->GetLocation(tryPos);
+    if (loc == 'K') {
         m_keyCount++;
         room->ClearLocation(tryPos);
     }
+    else if (loc == 'C') {
+        coins++;
+        room->ClearLocation(tryPos);
+    }
 
-    if (room->GetLocation(tryPos) == ' ') {
+    if (loc == ' ') {
         m_position = tryPos;
     }
 
     if (room->GetLocation(tryPos) == 'D') {
         room->OpenDoor(tryPos);
     }
+}
+
+void Player::PrintStats() {
+    printf("\n=== Player Stats ===\n");
+    printf("Health: %d\n", health);
+    printf("Keys: %d\n", m_keyCount);
+    printf("Coins: %d\n", coins);
+    printf("====================\n\n");
+}
+
+void Player::Heal(int amount) {
+    int oldHealth = health;
+    health += amount;
+    if (health > 10) {
+        health = 10; // Max health is 10
+    }
+    printf("\nRestored in new room! Healed %d health (was %d, now %d)\n\n", health - oldHealth, oldHealth, health);
 }

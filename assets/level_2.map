@@ -2,7 +2,7 @@ level 2
 next_level assets/level_1.map
 map
 # # D # # -1
+# 0 E 0 # -1
 # 0 0 0 # -1
-# 0 0 0 # -1
-# 0 S 0 # -1
+# 0 0 E # -1
 # # # # # -2

@@ -1,9 +1,11 @@
 #include "Room.hpp"
 
 #include "Player.hpp"
+#include "Monster.hpp"
 
 #include <fstream>
 #include <string>
+#include <algorithm>
 
 void Room::Load(std::string _path)
 {
@@ -80,6 +82,14 @@ void Room::Load(std::string _path)
                 m_map[y][x] = ' ';
             }
 
+            if (m_map[y][x] == 'E')
+            {
+                Monster* monster = new Monster();
+                monster->Start(Vec2(x,y));
+                m_monsters.push_back(monster);
+                m_map[y][x] = ' ';
+            }
+
             if (m_map[y][x] == 'D' || m_map[y][x] == 'L')
             {
                 if (m_doors.size() - 1 >= doorCount)
@@ -100,6 +110,11 @@ void Room::Update()
     {
         m_player->room = this;
         m_player->Update();
+    }
+    for (auto monster : m_monsters)
+    {
+        monster->room = this;
+        monster->Update();
     }
 }
 
@@ -127,6 +142,12 @@ char Room::GetLocation(Vec2 _pos)
         if (m_player->GetPosition() == _pos)
             return m_player->Draw();
     
+    for (auto monster : m_monsters)
+    {
+        if (monster->GetPosition() == _pos)
+            return monster->Draw();
+    }
+    
     return m_map[_pos.y][_pos.x];
 }
 
@@ -147,7 +168,31 @@ void Room::OpenDoor(Vec2 _pos)
     {
         if (m_doors[i].pos == _pos)
         {
+            if (m_player != nullptr)
+            {
+                m_player->Heal(3); // Heal 3 health when entering a new room
+            }
             Load(m_doors[i].path.c_str());
         }
+    }
+}
+
+Monster* Room::GetMonsterAt(Vec2 _pos)
+{
+    for (auto monster : m_monsters)
+    {
+        if (monster->GetPosition() == _pos)
+            return monster;
+    }
+    return nullptr;
+}
+
+void Room::RemoveMonster(Monster* _monster)
+{
+    auto it = std::find(m_monsters.begin(), m_monsters.end(), _monster);
+    if (it != m_monsters.end())
+    {
+        m_monsters.erase(it);
+        delete _monster;
     }
 }
