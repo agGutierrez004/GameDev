@@ -1,5 +1,5 @@
 #include "Room.hpp"
-
+using namespace std; 
 #include "Player.hpp"
 #include "Monster.hpp"
 
@@ -7,12 +7,12 @@
 #include <string>
 #include <algorithm>
 
-void Room::Load(std::string _path)
+void Room::Load(string _path)
 {
     m_map.clear();
     m_doors.clear();
 
-    std::ifstream file;
+    ifstream file;
     file.open(_path);
 
     if (!file.is_open())
@@ -21,7 +21,7 @@ void Room::Load(std::string _path)
         exit(1);
     }
 
-    std::string word;
+    string word;
     int number;
 
     while (file >> word)
@@ -45,7 +45,7 @@ void Room::Load(std::string _path)
 
         if (word == "map")
         {
-            m_map.push_back(std::vector<char>());
+            m_map.push_back(vector<char>());
             while(file >> word)
             {
                 if (word == "-2")
@@ -55,7 +55,7 @@ void Room::Load(std::string _path)
 
                 if (word == "-1")
                 {
-                    m_map.push_back(std::vector<char>());
+                    m_map.push_back(vector<char>());
                     continue;
                 }
 
@@ -189,7 +189,7 @@ Monster* Room::GetMonsterAt(Vec2 _pos)
 
 void Room::RemoveMonster(Monster* _monster)
 {
-    auto it = std::find(m_monsters.begin(), m_monsters.end(), _monster);
+    auto it = find(m_monsters.begin(), m_monsters.end(), _monster);
     if (it != m_monsters.end())
     {
         m_monsters.erase(it);

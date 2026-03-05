@@ -1,15 +1,15 @@
 #pragma once
-
+using namespace std; 
 #include <vector>
 #include "Door.hpp"
-
+using namespace std;
 class Entity;
 class Player;
 class Monster;
 
 class Room {
 public:
-    void Load(std::string _path);
+    void Load(string _path);
     void Draw();
     void Update();
     char GetLocation(Vec2 _pos);
@@ -18,9 +18,9 @@ public:
     Monster* GetMonsterAt(Vec2 _pos);
     void RemoveMonster(Monster* _monster);
 private:
-    std::vector<Entity*> m_entities;
+    vector<Entity*> m_entities;
     Player* m_player = nullptr;
-    std::vector<Monster*> m_monsters;
-    std::vector<std::vector<char>> m_map;
-    std::vector<Door> m_doors;
+    vector<Monster*> m_monsters;
+    vector<vector<char>> m_map;
+    vector<Door> m_doors;
 };
