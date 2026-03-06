@@ -3,12 +3,16 @@
 #include "Monster.hpp"
 #include "Dice.hpp"
 #include "fogpi/io.hpp"
-
+using namespace std; 
 void Player::Start(Vec2 _pos) {
     m_character = 'P';
     m_position = _pos;
 }
 
+void Player::Death(){
+    printf("Player has died with %d coins", coins);
+    exit(0);
+}
 void Player::Update() {
     //while(request_char("hit w to continue: ") != 'w') {}
 
@@ -48,8 +52,8 @@ void Player::Update() {
     if (monster != nullptr)
     {
         // Fight
-        std::vector<Die> playerDice = { {6} };
-        std::vector<Die> monsterDice = { {6} };
+        vector<Die> playerDice = { {6} };
+        vector<Die> monsterDice = { {6} };
         RollStats playerRoll = RollDice(playerDice);
         RollStats monsterRoll = RollDice(monsterDice);
         printf("Player rolls %d, Monster rolls %d\n", playerRoll.total, monsterRoll.total);
@@ -62,10 +66,9 @@ void Player::Update() {
         {
             printf("Monster wins! Player takes damage.\n");
             health -= 2;
-            if (health <= 0)
+            if (health <= 0)//player dies 
             {
-                printf("Player died!\n");
-                exit(0);
+                Player::Death();
             }
         }
         PrintStats();
@@ -98,6 +101,8 @@ void Player::PrintStats() {
     printf("Coins: %d\n", coins);
     printf("====================\n\n");
 }
+
+
 
 void Player::Heal(int amount) {
     int oldHealth = health;

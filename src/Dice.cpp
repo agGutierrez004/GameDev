@@ -1,6 +1,6 @@
 #include "Dice.hpp"
-
-RollStats RollDice(std::vector<Die> _dice)
+using namespace std;
+RollStats RollDice(vector<Die> _dice)
 {
     RollStats stats = {};
 

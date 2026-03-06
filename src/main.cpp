@@ -1,7 +1,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
-
+using namespace std; 
 #include <time.h>
 #include <iostream>
 
