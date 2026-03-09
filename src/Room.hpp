@@ -17,6 +17,7 @@ public:
     void OpenDoor(Vec2 _pos);
     Monster* GetMonsterAt(Vec2 _pos);
     void RemoveMonster(Monster* _monster);
+    bool HasMonsters() const { return !m_monsters.empty(); }
 private:
     vector<Entity*> m_entities;
     Player* m_player = nullptr;

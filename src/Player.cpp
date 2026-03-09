@@ -89,8 +89,14 @@ void Player::Update() {
         m_position = tryPos;
     }
 
-    if (room->GetLocation(tryPos) == 'D') {
+    if (loc == 'D') {
         room->OpenDoor(tryPos);
+    } else if (loc == 'L') {
+        if (!room->HasMonsters()) {
+            room->OpenDoor(tryPos);
+        } else {
+            printf("The door is locked until all monsters are defeated!\n");
+        }
     }
 }
 

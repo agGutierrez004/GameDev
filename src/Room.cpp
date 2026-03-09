@@ -3,6 +3,9 @@ using namespace std;
 #include "Player.hpp"
 #include "Monster.hpp"
 
+// global counter to give each monster a unique label
+static int s_monsterCount = 0;
+
 #include <fstream>
 #include <string>
 #include <algorithm>
@@ -84,7 +87,10 @@ void Room::Load(string _path)
 
             if (m_map[y][x] == 'E')
             {
-                Monster* monster = new Monster();
+                MonsterType t = (rand() % 2 == 0) ? MonsterType::Goblin : MonsterType::Orc;
+                Monster* monster = new Monster(t);
+                // give it a unique number so labels differ
+                monster->name += " #" + to_string(++s_monsterCount);
                 monster->Start(Vec2(x,y));
                 m_monsters.push_back(monster);
                 m_map[y][x] = ' ';
@@ -97,6 +103,21 @@ void Room::Load(string _path)
                     m_doors[doorCount].pos.x = x;
                     m_doors[doorCount].pos.y = y;
                     doorCount++;
+                }
+            }
+        }
+    }
+
+    // Lock doors if monsters are present
+    if (!m_monsters.empty()) 
+    {
+        for (auto& row : m_map) 
+        {
+            for (auto& cell : row) 
+            {
+                if (cell == 'D') 
+                {
+                    cell = 'L';  // Lock open doors
                 }
             }
         }
@@ -194,5 +215,20 @@ void Room::RemoveMonster(Monster* _monster)
     {
         m_monsters.erase(it);
         delete _monster;
+    }
+
+    // Unlock doors if no monsters left
+    if (m_monsters.empty()) 
+    {
+        for (auto& row : m_map) 
+        {
+            for (auto& cell : row) 
+            {
+                if (cell == 'L') 
+                {
+                    cell = 'D';  // Unlock doors
+                }
+            }
+        }
     }
 }

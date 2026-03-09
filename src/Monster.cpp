@@ -2,10 +2,13 @@
 #include "Room.hpp"
 
 void Monster::Start(Vec2 _pos) {
-    m_character = 'E';
+    // character already set by constructor based on type
     m_position = _pos;
 }
 
 void Monster::Update() {
-    // Monster does nothing for now
+    // simple debug output for this monster
+    cout << "[Monster] ";
+    display();
+    // behaviour to be implemented later
 }
