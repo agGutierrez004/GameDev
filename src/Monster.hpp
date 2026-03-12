@@ -38,7 +38,7 @@ public:
             name       = "Orc";
             m_character = 'o';           // o for orc
             health     = 10;
-            attack     = 4;
+            attack     = 2;
             break;
         }
     }

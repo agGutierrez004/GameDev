@@ -3,16 +3,15 @@
 #include "Monster.hpp"
 #include "Dice.hpp"
 #include "fogpi/io.hpp"
-using namespace std; 
+#include <algorithm>
+#include <random>
+using namespace std;
+
 void Player::Start(Vec2 _pos) {
     m_character = 'P';
     m_position = _pos;
 }
 
-void Player::Death(){
-    printf("Player has died with %d coins", coins);
-    exit(0);
-}
 void Player::Update() {
     //while(request_char("hit w to continue: ") != 'w') {}
 
@@ -52,7 +51,7 @@ void Player::Update() {
     if (monster != nullptr)
     {
         // Fight
-        vector<Die> playerDice = { {6} };
+        vector<Die> playerDice(m_attackDice, Die{6});
         vector<Die> monsterDice = { {6} };
         RollStats playerRoll = RollDice(playerDice);
         RollStats monsterRoll = RollDice(monsterDice);
@@ -105,16 +104,85 @@ void Player::PrintStats() {
     printf("Health: %d\n", health);
     printf("Keys: %d\n", m_keyCount);
     printf("Coins: %d\n", coins);
+    printf("Attack dice: %d\n", m_attackDice);
+    if (coinBonus)
+        printf("Coin bonus: +%d\n", coinBonus);
     printf("====================\n\n");
 }
-
-
 
 void Player::Heal(int amount) {
     int oldHealth = health;
     health += amount;
-    if (health > 10) {
-        health = 10; // Max health is 10
+    if (health > maxHealth) {
+        health = maxHealth;
     }
     printf("\nRestored in new room! Healed %d health (was %d, now %d)\n\n", health - oldHealth, oldHealth, health);
+}
+
+const std::vector<Player::Upgrade>& Player::GetAllUpgrades()
+{
+    static std::vector<Upgrade> s_upgrades = {
+        { "Max health +2", /*cost*/ 2, [](Player& p) {
+              p.maxHealth += 2;
+              p.health = std::min(p.health + 2, p.maxHealth);
+          } },
+        { "Extra attack die", /*cost*/ 4, [](Player& p) {
+              p.m_attackDice += 1;
+          } },
+        { "Extra Coins on Pickup", /*cost*/ 3, [](Player& p) {
+              p.coinBonus += 1;
+          } },
+    };
+    return s_upgrades;
+}
+
+void Player::OfferUpgrades()
+{
+    auto all = GetAllUpgrades();
+    if (all.empty())
+        return;
+
+    std::vector<Upgrade> choices;
+    std::sample(all.begin(), all.end(),
+                std::back_inserter(choices),
+                std::min<size_t>(3, all.size()),
+                std::mt19937{std::random_device{}()});
+
+    printf("\n--- Choose an upgrade ---\n");
+    printf("0) None\n");
+    for (size_t i = 0; i < choices.size(); ++i)
+        printf("%zu) %s (cost %d coins)\n", i + 1,
+               choices[i].name.c_str(), choices[i].cost);
+
+    char c;
+    int idx;
+    std::string prompt = "pick 0-" + std::to_string(choices.size()) + ": ";
+    do {
+        c = request_char(prompt.c_str());
+        if (c == '0') {
+            printf("No upgrade taken.\n\n");
+            return; // exit early, player declines
+        }
+        if (c < '1' || c >= '1' + (int)choices.size())
+            continue;
+        idx = c - '1';
+        if (coins < choices[idx].cost) {
+            printf("Not enough coins! You have %d, need %d.\n",
+                   coins, choices[idx].cost);
+            c = 0; // force loop again
+        }
+    } while (c == 0);
+
+    coins -= choices[idx].cost;
+    choices[idx].apply(*this);
+
+    printf("You picked: %s\n\n", choices[idx].name.c_str());
+    request_char("press enter to continue");
+}
+
+void Player::Death(){
+    printf("Player has died with %d coins\n", coins);
+    printf("For a death anthem:\n");
+    printf("https://www.youtube.com/watch?v=dQw4w9WgXcQ\n");
+    exit(0);
 }

@@ -192,6 +192,7 @@ void Room::OpenDoor(Vec2 _pos)
             if (m_player != nullptr)
             {
                 m_player->Heal(3); // Heal 3 health when entering a new room
+                m_player->OfferUpgrades();
             }
             Load(m_doors[i].path.c_str());
         }
