@@ -6,4 +6,5 @@ struct Door
 {
     Vec2 pos;
     string path;
+    bool requiresKey = false; 
 };

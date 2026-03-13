@@ -1,5 +1,6 @@
 #include "Dice.hpp"
 using namespace std;
+#include "fogpi/io.hpp"
 RollStats RollDice(vector<Die> _dice)
 {
     RollStats stats = {};

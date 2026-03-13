@@ -13,22 +13,21 @@ public:
     void PrintStats();
     void Death();
     void Heal(int amount);
+    void OfferUpgrades();
 
     struct Upgrade {
         std::string name;
-        int cost = 0;                          // coins needed for purchase
+        int cost = 0;
         std::function<void(Player&)> apply;
     };
 
-    void OfferUpgrades();
-
     Room* room = nullptr;
-    int m_keyCount = 0;        // keys collected
-    int coins = 0;            // distinct coin currency
+    int m_keyCount = 0;
+    int coins = 0;
     int health = 10;
-    int maxHealth = 10;        // current maximum health
-    int m_attackDice = 1;      // number of extra dice for player attacks
-    int coinBonus = 0;         // extra coins on pickup
+    int maxHealth = 10;
+    int m_attackDice = 1;
+    int coinBonus = 0;
 
 private:
     static const std::vector<Upgrade>& GetAllUpgrades();

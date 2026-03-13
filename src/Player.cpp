@@ -74,28 +74,55 @@ void Player::Update() {
         return; // Don't move
     }
 
-    char loc = room->GetLocation(tryPos);
+        char loc = room->GetLocation(tryPos);
+
     if (loc == 'K') {
         m_keyCount++;
+        printf("You picked up a key!\n");
         room->ClearLocation(tryPos);
     }
     else if (loc == 'C') {
-        coins++;
+        int coinAmount = random_int(1, 3);
+        coins += coinAmount;
+        printf("You picked up %d coin(s)!\n", coinAmount);
+        room->ClearLocation(tryPos);
+    }
+    else if (loc == 'H') {
+        int healAmount = random_int(3, 6);
+        health += healAmount;
+        if (health > maxHealth) {
+            health = maxHealth;
+        }
+
+        printf("You picked up a health potion and healed %d HP!\n", healAmount);
+        room->ClearLocation(tryPos);
+    }
+    else if (loc == 'G') {
+        int goldAmount = 5;
+        coins += goldAmount;
+        printf("You opened the chest and found %d gold!\n", goldAmount);
         room->ClearLocation(tryPos);
     }
 
     if (loc == ' ') {
         m_position = tryPos;
     }
+    else if (loc == 'K' || loc == 'C' || loc == 'G' || loc == 'H') {
+        m_position = tryPos;
+    }
 
     if (loc == 'D') {
         room->OpenDoor(tryPos);
-    } else if (loc == 'L') {
+    } 
+    else if (loc == 'L') {
         if (!room->HasMonsters()) {
             room->OpenDoor(tryPos);
         } else {
             printf("The door is locked until all monsters are defeated!\n");
         }
+    }
+    else if (loc == 'T') {
+        room->OpenDoor(tryPos);
     }
 }
 

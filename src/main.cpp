@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
 
     Room room;
     room.Load("assets/level_1.map");
+    printf("Loaded room:\n");
 
     while(true)
     {
