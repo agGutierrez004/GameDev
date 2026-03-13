@@ -97,6 +97,7 @@ void Player::Update() {
         printf("You picked up a health potion and healed %d HP!\n", healAmount);
         room->ClearLocation(tryPos);
     }
+    
     else if (loc == 'G') {
         int goldAmount = 5;
         coins += goldAmount;
